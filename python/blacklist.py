@@ -2,8 +2,7 @@ import yaml
 
 
 def main():
-    block_type = read_yaml_file
-    block_type = (block_type["blockType"]+1)%2
+    block_type = (read_yaml_file()["blockType"] + 1) % 2
     write_yaml_file(block_type, "blockType")
 
 
