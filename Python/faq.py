@@ -8,6 +8,7 @@ from asyncio import sleep
 
 from pagermaid.listener import listener
 from pagermaid.enums import Client, Message
+from pagermaid.utils import pip_install
 
 pip_install("aiohttp")
 
