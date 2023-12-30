@@ -11,13 +11,7 @@ from pyrogram.types import InlineKeyboardButton
 
 
 def get_requests(json_data):
-    if json_data["code"] == 0:
-        if json_data["result"]["limit"]:
-            return False
-        else:
-            return True
-    else:
-        return False
+    return json_data["code"] == 0 and not json_data["result"]["limit"]
 
 
 # collector section
@@ -30,36 +24,22 @@ async def fetch_biliintl(collector, session: aiohttp.ClientSession, proxy=None, 
     :param proxy:
     :return:
     """
-    link_click_link = "https://api.bilibili.tv/intl/gateway/v2/ogv/view/app/season?season_id=1006275&s_locale=zh_SG" \
-                      "&mobi_app=bstar_a&build=1080003"
-    spy_family_link = "https://api.bilibili.tv/intl/gateway/v2/ogv/view/app/season?season_id=1048837&s_locale=zh_SG" \
-                      "&mobi_app=bstar_a&build=1080003"
-    spy_family_th_link = "https://api.bilibili.tv/intl/gateway/v2/ogv/view/app/season?season_id=1057120" \
-                         "&s_locale=zh_SG&mobi_app=bstar_a&build=1080003"
-    spy_family_vn_link = "https://api.bilibili.tv/intl/gateway/v2/ogv/view/app/season?season_id=1057175" \
-                         "&s_locale=zh_SG&mobi_app=bstar_a&build=1080003"
-    spy_family_id_link = "https://api.bilibili.tv/intl/gateway/v2/ogv/view/app/season?season_id=1057318" \
-                         "&s_locale=zh_SG&mobi_app=bstar_a&build=1080003"
+    link = "https://api.bilibili.tv/intl/gateway/v2/ogv/view/app/season?season_id={}&s_locale=zh_SG&mobi_app=bstar_a&build=1080003"
     try:
-        res = await session.get(link_click_link, proxy=proxy, timeout=5)
-        json_data = await res.json()
-        link_click = get_requests(json_data)
+        res = await session.get(link.format(1006275), proxy=proxy, timeout=5)
+        link_click = get_requests(await res.json())
         if link_click:
-            res = await session.get(spy_family_link, proxy=proxy, timeout=5)
-            json_data = await res.json()
-            spy_family = get_requests(json_data)
+            res = await session.get(link.format(1048837), proxy=proxy, timeout=5)
+            spy_family = get_requests(await res.json())
             if spy_family:
-                res = await session.get(spy_family_th_link, proxy=proxy, timeout=5)
-                json_data = await res.json()
-                spy_family_th = get_requests(json_data)
+                res = await session.get(link.format(1057120), proxy=proxy, timeout=5)
+                spy_family_th = get_requests(await res.json())
 
-                res = await session.get(spy_family_vn_link, proxy=proxy, timeout=5)
-                json_data = await res.json()
-                spy_family_vn = get_requests(json_data)
+                res = await session.get(link.format(1057175), proxy=proxy, timeout=5)
+                spy_family_vn = get_requests(await res.json())
 
-                res = await session.get(spy_family_id_link, proxy=proxy, timeout=5)
-                json_data = await res.json()
-                spy_family_id = get_requests(json_data)
+                res = await session.get(link.format(1057318), proxy=proxy, timeout=5)
+                spy_family_id = get_requests(await res.json())
 
                 if spy_family_th:
                     collector.info['biliintl'] = "解锁(泰国)"
@@ -91,7 +71,7 @@ def task(Collector, session, proxy):
 def get_biliintl_info(self):
     """
 
-        :return: str: 解锁信息: [解锁(台湾)、解锁(港澳台)、失败、N/A]
+        :return: str: 解锁信息: [解锁(东南亚)、解锁(泰国)、解锁(越南)、解锁(印尼)、仅限国创、失败、N/A]
         """
     try:
         if 'biliintl' not in self.data:
