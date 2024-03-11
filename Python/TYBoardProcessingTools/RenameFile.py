@@ -17,6 +17,15 @@ def rename_files_with_info(directory, info):
         print(f"Renamed {file_name} to {new_name}")
 
 
+def write_info_to_txt(info, file_path):
+    with open(file_path, 'w', encoding='utf-8') as file:
+        for i, description in enumerate(info, start=1):
+            file.write(f"{i}.{description}\n")
+        print(f"INFO 内容已写入到 {file_path}")
+
+
 # 请将 'directory' 替换为你的目录路径
 directory = '/path/to/your/directory'
+file_path = '/path/to/your/info.txt'
 rename_files_with_info(directory, INFO)
+write_info_to_txt(INFO, file_path)
